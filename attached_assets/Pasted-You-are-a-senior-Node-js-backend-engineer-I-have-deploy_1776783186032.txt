@@ -1,0 +1,120 @@
+You are a senior Node.js backend engineer.
+
+I have deployed my Express backend on Replit, but the public URL is not working properly. The app shows as "published" but does not respond correctly when opened.
+
+Your task is to FIX the deployment issues and make the backend accessible from the browser.
+
+---
+
+## 🎯 Goals
+
+* Ensure the server runs correctly on Replit
+* Ensure the app responds when opening the base URL `/`
+* Ensure APIs are reachable publicly
+* Make the backend production-ready for demo
+
+---
+
+## 🔍 Fix the following issues:
+
+### 1. Server Port (CRITICAL)
+
+* Replace any hardcoded port like `3000`
+* Use:
+
+```js
+const PORT = process.env.PORT || 3000;
+```
+
+* Ensure app listens properly:
+
+```js
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+```
+
+---
+
+### 2. Root Route (MUST ADD)
+
+Add a default route so the base URL works:
+
+```js
+app.get("/", (req, res) => {
+  res.json({
+    status: "success",
+    message: "2Care AI Backend is running 🚀",
+    endpoints: {
+      chat: "/chat",
+      users: "/users",
+      appointments: "/appointments"
+    }
+  });
+});
+```
+
+---
+
+### 3. Middleware Setup
+
+Ensure:
+
+* express.json() is enabled
+* CORS is enabled (important for public access)
+
+---
+
+### 4. Error Handling
+
+* Add a global error handler middleware
+* Return proper JSON errors
+
+---
+
+### 5. Route Mounting
+
+Make sure routes are properly connected:
+
+```js
+app.use("/users", userRoutes);
+app.use("/appointments", appointmentRoutes);
+app.use("/chat", chatRoutes);
+```
+
+---
+
+### 6. Environment Variables
+
+* Ensure `.env` is used
+* Do NOT hardcode API keys
+* Load using `dotenv.config()`
+
+---
+
+### 7. Logging
+
+* Add console logs to confirm server start
+* Log incoming requests for debugging
+
+---
+
+## 🧪 Testing Instructions (IMPORTANT)
+
+After fixing, ensure:
+
+* Opening `/` shows JSON response
+* `/chat` works via POST request
+* `/users` and `/appointments` respond correctly
+
+---
+
+## 🚀 Output
+
+* Provide corrected `server.js` or `app.js`
+* Highlight what was wrong and how you fixed it
+* Ensure code runs perfectly on Replit
+
+---
+
+Act like you are fixing a real production issue for a deployed startup backend.
