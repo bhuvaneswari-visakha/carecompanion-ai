@@ -1,22 +1,23 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: AI-powered healthcare assistant API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: users
+  - name: appointments
+  - name: chat
+  - name: dashboard
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +25,306 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /users:
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a patient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserInput"
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List patients
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get patient
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /appointments:
+    post:
+      operationId: createAppointment
+      tags: [appointments]
+      summary: Book an appointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAppointmentInput"
+      responses:
+        "200":
+          description: Booked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+
+  /appointments/user/{userId}:
+    get:
+      operationId: getUserAppointments
+      tags: [appointments]
+      summary: List appointments for a user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Appointment"
+
+  /appointments/{id}:
+    put:
+      operationId: updateAppointment
+      tags: [appointments]
+      summary: Update or reschedule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAppointmentInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+    delete:
+      operationId: cancelAppointment
+      tags: [appointments]
+      summary: Cancel an appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Cancelled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+
+  /chat:
+    post:
+      operationId: sendChatMessage
+      tags: [chat]
+      summary: Send a chat message and get AI response
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+
+  /conversations/{userId}:
+    get:
+      operationId: getConversations
+      tags: [chat]
+      summary: Get conversation history for a user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conversation"
+
+  /dashboard/{userId}:
+    get:
+      operationId: getDashboard
+      tags: [dashboard]
+      summary: Get patient dashboard summary
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
 components:
   schemas:
     HealthStatus:
       type: object
       properties:
+        status: { type: string }
+      required: [status]
+
+    User:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        email: { type: string, nullable: true }
+        phone: { type: string, nullable: true }
+        createdAt: { type: string }
+      required: [id, name, createdAt]
+
+    CreateUserInput:
+      type: object
+      properties:
+        name: { type: string, minLength: 1 }
+        email: { type: string, nullable: true }
+        phone: { type: string, nullable: true }
+      required: [name]
+
+    Appointment:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        doctorName: { type: string }
+        specialty: { type: string }
+        date: { type: string }
+        time: { type: string }
+        reason: { type: string, nullable: true }
         status:
           type: string
-      required:
-        - status
+          enum: [booked, cancelled, completed]
+        createdAt: { type: string }
+      required: [id, userId, doctorName, specialty, date, time, status, createdAt]
 
+    CreateAppointmentInput:
+      type: object
+      properties:
+        userId: { type: string }
+        doctorName: { type: string, minLength: 1 }
+        specialty: { type: string, minLength: 1 }
+        date: { type: string }
+        time: { type: string }
+        reason: { type: string, nullable: true }
+      required: [userId, doctorName, specialty, date, time]
+
+    UpdateAppointmentInput:
+      type: object
+      properties:
+        doctorName: { type: string }
+        specialty: { type: string }
+        date: { type: string }
+        time: { type: string }
+        reason: { type: string, nullable: true }
+        status:
+          type: string
+          enum: [booked, cancelled, completed]
+
+    ChatInput:
+      type: object
+      properties:
+        userId: { type: string }
+        message: { type: string, minLength: 1 }
+      required: [userId, message]
+
+    ChatResponse:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        message: { type: string }
+        response: { type: string }
+        suggestion:
+          type: string
+          nullable: true
+          enum: [book_appointment, see_doctor, none]
+        createdAt: { type: string }
+      required: [id, userId, message, response, createdAt]
+
+    Conversation:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        message: { type: string }
+        response: { type: string }
+        createdAt: { type: string }
+      required: [id, userId, message, response, createdAt]
+
+    DashboardSummary:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        upcomingAppointments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Appointment"
+        pastAppointments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Appointment"
+        totalAppointments: { type: integer }
+        totalConversations: { type: integer }
+        recentConversations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Conversation"
+      required: [user, upcomingAppointments, pastAppointments, totalAppointments, totalConversations, recentConversations]

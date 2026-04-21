@@ -1,0 +1,159 @@
+You are a senior backend engineer and system architect.
+
+Build a production-level backend for an AI-powered healthcare assistant (similar to 2Care AI).
+
+## 🎯 Goal
+
+Create a scalable backend system where:
+
+* Patients can chat with an AI assistant
+* AI can respond intelligently
+* Patients can book, view, and manage appointments
+* The system supports automation workflows (like reminders and follow-ups)
+
+---
+
+## 🧱 Tech Stack
+
+* Node.js with Express
+* MongoDB with Mongoose
+* OpenAI API (or equivalent) for AI responses
+* Use dotenv for environment variables
+
+---
+
+## 📁 Project Structure (STRICT)
+
+Follow clean architecture:
+
+* /src
+
+  * /routes
+  * /controllers
+  * /services
+  * /models
+  * /middlewares
+  * /utils
+* app.js
+* server.js
+
+---
+
+## 🗄️ Database Models
+
+### User (Patient)
+
+* name
+* email or phone
+* createdAt
+
+### Appointment
+
+* userId (ref User)
+* date
+* time
+* status (booked, cancelled, completed)
+
+### Conversation
+
+* userId
+* message (user input)
+* response (AI output)
+* timestamp
+
+---
+
+## 🔌 API Endpoints
+
+### User APIs
+
+* POST /users → create user
+* GET /users/:id → get user details
+
+### Appointment APIs
+
+* POST /appointments → book appointment
+* GET /appointments/:userId → get user appointments
+* PUT /appointments/:id → update/reschedule
+* DELETE /appointments/:id → cancel appointment
+
+### Chat API (CORE)
+
+* POST /chat
+
+  * Input: userId, message
+  * Output: AI-generated response
+
+---
+
+## 🤖 AI Integration
+
+* Use OpenAI API
+* Create a service that:
+
+  * Takes user message
+  * Adds healthcare assistant context
+  * Returns helpful, safe responses
+
+Example system prompt:
+"You are a helpful healthcare assistant. Suggest booking appointments when needed. Be polite and concise."
+
+---
+
+## 🔁 Automation Logic
+
+Implement workflows:
+
+* After booking → return confirmation message
+* If user mentions symptoms → suggest doctor visit
+* Before appointment (simulate) → reminder message
+
+---
+
+## 🧠 Code Quality Rules
+
+* Use async/await properly
+* Proper error handling (try/catch, middleware)
+* Keep controllers thin, logic in services
+* Use meaningful variable names
+* Modular and scalable code
+
+---
+
+## 📜 README.md
+
+Generate a professional README including:
+
+* Project overview
+* Features
+* Tech stack
+* API documentation
+* Setup instructions
+* Example requests/responses
+
+---
+
+## 🧪 Testing
+
+* Provide sample Postman request bodies
+* Include example JSON responses
+
+---
+
+## ⭐ Bonus (if possible)
+
+* Add basic authentication (JWT)
+* Add input validation (Joi or express-validator)
+* Add Swagger API docs
+
+---
+
+## 🚀 Output Format
+
+* Provide complete code files
+* Clearly separate each file with filename comments
+* Ensure the project runs without errors
+
+---
+
+Act like you are building this for a real startup. Focus on clarity, scalability, and real-world usability.
