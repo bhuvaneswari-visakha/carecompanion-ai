@@ -1,5 +1,10 @@
 # 🏥 CareCompanion AI
 
+
+
+# Architecture:
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/137ea183-9e67-4bc6-bdb4-4d9a52ec9e05" />
+
 **AI-Powered Healthcare Assistant with Chat + Appointment Booking**
 
 CareCompanion AI is a smart healthcare companion that allows patients to describe their symptoms, receive safe AI guidance, and seamlessly book doctor appointments — all in one flow.
